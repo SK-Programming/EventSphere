@@ -23,7 +23,9 @@ function Navbar() {
   let left = 228
   let width = 55
 
-  if (location.pathname === "/events") {
+  if ( location.pathname === "/upcoming-events" ||
+  location.pathname.startsWith("/events/")
+ ) {
     left = 312
     width = 62
   } else if (location.pathname === "/exhibitors") {
@@ -70,7 +72,7 @@ function Navbar() {
             <Typography component={Link} to="/" sx={{ textDecoration: "none", color: "text.primary" }}>
               Home
             </Typography>
-            <Typography component={Link} to="/events" sx={{ textDecoration: "none", color: "text.primary" }}>
+            <Typography component={Link} to="/upcoming-events" sx={{ textDecoration: "none", color: "text.primary" }}>
               Events
             </Typography>
             <Typography component={Link} to="/exhibitors" sx={{ textDecoration: "none", color: "text.primary" }}>
@@ -97,8 +99,10 @@ function Navbar() {
               borderRadius: "8px",
               "&:hover": { backgroundColor: "secondary.main" },
             }}
+              component={Link}
+                      to="/login"
           >
-            Start Free Now
+            Register
           </Button>
 
           <IconButton

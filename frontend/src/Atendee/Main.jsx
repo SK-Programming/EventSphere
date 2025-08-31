@@ -6,6 +6,9 @@ import Home from "./Pages/Home"
 import Contact from "./Pages/Contact"
 import Events from "./Pages/Events"
 import Exhibitors from "./Pages/Exhibitors"
+import UpcomingEventsPage from "./Pages/UpcomingEventsPage"
+import LoginRegister from "./Pages/LoginRegister"
+import EventDetails from "./Pages/EventDetails"
 
 function Main() {
   return (
@@ -17,8 +20,13 @@ function Main() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/events" element={<Events />} />
           <Route path="/exhibitors" element={<Exhibitors />} />
+           <Route path="/upcoming-events" element={<UpcomingEventsPage />} />
+         <Route path="/events/:id" element={<EventDetails />} />
         </Routes>
       </Container>
+      <Routes>
+            <Route path="/login" element={<LoginRegister/>}/>
+      </Routes>
     </Router>
   )
 }

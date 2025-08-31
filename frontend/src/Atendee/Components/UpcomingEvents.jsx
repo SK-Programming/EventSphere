@@ -9,7 +9,7 @@ import {
   Button,
   Divider,
 } from "@mui/material";
-
+import { Link} from "react-router";
 const events = [
   {
     date: "Dec 02",
@@ -45,9 +45,14 @@ function UpcomingEvents() {
         Upcoming Events
       </Typography>
 
-      <Button variant="contained" sx={{bgcolor:"secondary.main" ,mb:3}}>
-        View All
-      </Button>
+      <Button
+          variant="contained"
+          sx={{ bgcolor: "secondary.main", mb: 3 }}
+          component={Link}
+          to="/upcoming-events" 
+        >
+          View All
+        </Button>
  </Box>
   
 
@@ -88,9 +93,10 @@ function UpcomingEvents() {
                 <Button
                   variant="text"
                   sx={{
-                    color: index === 2 ? "#FFC107" : "text.primary",
+                    color:"text.primary",
                     fontWeight: "bold",
                   }}
+                 
                 >
                   View Details
                 </Button>
