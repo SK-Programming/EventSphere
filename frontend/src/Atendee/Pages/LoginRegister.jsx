@@ -8,6 +8,8 @@ import {
   IconButton,
   Paper,
   Divider,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import {
   Visibility,
@@ -17,13 +19,94 @@ import {
   Person,
 } from "@mui/icons-material";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function LoginRegister() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
+  const navigate = useNavigate();
 
-  const handleToggle = () => setIsLogin(!isLogin);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  // Toggle between Login & Signup
+  const handleToggle = () => {
+    setIsLogin(!isLogin);
+    setMessage({ type: "", text: "" });
+    setFormData({
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
+
+  // Input field changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Submit Form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
+    // validation for signup
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      setMessage({ type: "error", text: "Passwords do not match" });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const endpoint = isLogin
+        ? "http://localhost:5000/api/auth/login"
+        : "http://localhost:5000/api/auth/register";
+
+      const payload = isLogin
+        ? { email: formData.email, password: formData.password }
+        : {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+          };
+
+      // axios request
+      const res = await axios.post(endpoint, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = res.data;
+
+      // save token + user to localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      setMessage({
+        type: "success",
+        text: isLogin ? "Login successful!" : "Signup successful!",
+      });
+
+      setTimeout(() => {
+        navigate("/dashboard"); // adjust route as needed
+      }, 1500);
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text: err.response?.data?.message || "Network error, please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box
@@ -35,10 +118,13 @@ function LoginRegister() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        p: 2,
       }}
     >
       <Paper
         elevation={6}
+        component="form"
+        onSubmit={handleSubmit}
         sx={{
           width: 350,
           p: 4,
@@ -54,15 +140,24 @@ function LoginRegister() {
           fontWeight="bold"
           sx={{ mb: 3, color: "#fff" }}
         >
-          {isLogin ? "Login" : "SignUp"}
+          {isLogin ? "Login" : "Sign Up"}
         </Typography>
 
-        {/* Username field for signup */}
+        {message.text && (
+          <Alert severity={message.type} sx={{ mb: 2 }}>
+            {message.text}
+          </Alert>
+        )}
+
         {!isLogin && (
           <TextField
             fullWidth
             placeholder="Username"
             margin="normal"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            required
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -86,6 +181,11 @@ function LoginRegister() {
           fullWidth
           placeholder="Email"
           margin="normal"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -104,12 +204,15 @@ function LoginRegister() {
           }}
         />
 
-    
         <TextField
           fullWidth
           placeholder="Password"
           margin="normal"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
           type={showPassword ? "text" : "password"}
+          required
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -118,7 +221,10 @@ function LoginRegister() {
             ),
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
                   {showPassword ? (
                     <VisibilityOff sx={{ color: "#fff" }} />
                   ) : (
@@ -139,13 +245,16 @@ function LoginRegister() {
           }}
         />
 
-       
         {!isLogin && (
           <TextField
             fullWidth
             placeholder="Confirm Password"
             margin="normal"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
             type="password"
+            required
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -168,6 +277,8 @@ function LoginRegister() {
         <Button
           fullWidth
           variant="contained"
+          type="submit"
+          disabled={loading}
           sx={{
             mt: 2,
             borderRadius: 3,
@@ -176,54 +287,16 @@ function LoginRegister() {
             "&:hover": { bgcolor: "#333" },
           }}
         >
-          {isLogin ? "Login" : "SignUp"}
+          {loading ? (
+            <CircularProgress size={24} />
+          ) : isLogin ? (
+            "Login"
+          ) : (
+            "Sign Up"
+          )}
         </Button>
 
     
-        <Divider
-          sx={{
-            my: 3,
-              fontFamily: "Arial, sans-serif",
-            "&::before, &::after": { borderColor: "#fff", borderWidth: "2px" },
-            "& .MuiDivider-wrapper": { color: "#fff", fontWeight: "bold" },
-
-          }}
-          
-        >
-          OR
-        </Divider>
-
-        
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<FaGoogle />}
-          sx={{
-            borderRadius: 3,
-            bgcolor: "#fff",
-            color: "#000",
-            "&:hover": { bgcolor: "#eee" },
-          }}
-        >
-          {isLogin ? "Login with Google" : "SignUp with Google"}
-        </Button>
-
-        <Button
-          fullWidth
-          variant="contained"
-          startIcon={<FaFacebook />}
-          sx={{
-            mt: 2,
-            borderRadius: 3,
-            bgcolor: "#1877f2",
-            color: "#fff",
-            "&:hover": { bgcolor: "#145dbf" },
-          }}
-        >
-          {isLogin ? "Login with Facebook" : "SignUp with Facebook"}
-        </Button>
-
-
         <Typography
           sx={{
             mt: 2,
@@ -233,12 +306,15 @@ function LoginRegister() {
           }}
           onClick={handleToggle}
         >
-          {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+          {isLogin
+            ? "Don't have an account? Sign Up"
+            : "Already have an account? Login"}
         </Typography>
+
         <Divider
           sx={{
             my: 2,
-              fontFamily: "Arial, sans-serif",
+            fontFamily: "Arial, sans-serif",
             "&::before, &::after": { borderColor: "#fff", borderWidth: "2px" },
             "& .MuiDivider-wrapper": { color: "#fff", fontWeight: "bold" },
           }}
@@ -251,7 +327,7 @@ function LoginRegister() {
           variant="contained"
           color="primary"
           component={Link}
-          to="/upcoming-events"
+          to="/exhibitors-register"
         >
           Register as Exhibitor
         </Button>

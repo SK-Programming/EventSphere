@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import Main from './Atendee/Main'
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import ExhibitorMain from './Exhibitor/ExhibitorMain'
 
 
 const theme = createTheme({
@@ -54,7 +55,8 @@ function App() {
     <>
      <ThemeProvider theme={theme}>
 
-          <Main/>
+          {/* <Main/> */}
+     <ExhibitorMain/>
      </ThemeProvider>
 
 
