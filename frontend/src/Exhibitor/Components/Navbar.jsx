@@ -23,12 +23,11 @@ import {
   Message,
   Logout,
 } from "@mui/icons-material";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
 
 function Navbar({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
-
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
@@ -40,19 +39,33 @@ function Navbar({ children }) {
     navigate("/login");
   };
 
-  // Sidebar nav items (updated according to routes)
-  const navItems = [
-    { text: "Dashboard", icon: <Dashboard />, path: "/exhibitor/dashboard" },
-    { text: "My Exhibitions", icon: <Event />, path: "/exhibitor/exhibitions" },
-    { text: "Previous Exhibitions", icon: <History />, path: "/exhibitor/previous-exhibitions" },
-    { text: "Create Event", icon: <AddCircle />, path: "/exhibitor/create-event" },
-    { text: "Messages", icon: <Message />, path: "/exhibitor/messages" },
-  ];
+  // 🔥 Manual highlight with if/else
+  let highlightTop = -1;
 
-  // Active index
-  const activeIndex = navItems.findIndex((item) =>
-    location.pathname.startsWith(item.path)
-  );
+  if (location.pathname === "/exhibitor/dashboard") {
+    highlightTop = 0;
+  } else if (location.pathname === "/exhibitor/exhibitions") {
+    highlightTop = 48;
+  } 
+  else if (location.pathname.startsWith("/exhibitor/events/")) {
+    // dynamic route: matches /exhibitor/events/:id
+    highlightTop = 48;
+  }
+   else if (location.pathname === "/exhibitor/previous-exhibitions") {
+    highlightTop = 96;
+  }
+    else if (location.pathname.startsWith("/previous-exhibitions/")) {
+    // dynamic route: matches /exhibitor/events/:id
+    highlightTop = 96;
+  }
+
+   else if (location.pathname === "/exhibitor/create-event") {
+    highlightTop = 144;
+  } else if (location.pathname === "/exhibitor/messages") {
+    highlightTop = 192;
+  } else if (location.pathname === "/exhibitor/profile") {
+    highlightTop = 240;
+  }
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -89,47 +102,95 @@ function Navbar({ children }) {
           </Typography>
         </Box>
 
-        <Box sx={{ position: "relative", flex: 1 ,mt:2}}>
-     
-          <Box
-            sx={{
-              position: "absolute",
-              top: `${activeIndex * 48}px`,
-              left: 0,
-              mt:1,
-              width: "100%",
-              height: "48px",
-              bgcolor: "secondary.main",
-           
-              transition: "top 0.3s ease",
-            }}
-          />
+        {/* Highlight bar */}
+        <Box sx={{ position: "relative", flex: 1, mt: 2 }}>
+          {highlightTop !== -1 && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: `${highlightTop}px`,
+                left: 0,
+                width: "100%",
+                height: "48px",
+                bgcolor: "secondary.main",
+                transition: "top 0.3s ease",
+                zIndex: 0,
+                mt:1
+              }}
+            />
+          )}
+
           <List>
-            {navItems.map((item, index) => (
-              <ListItem key={item.text} disablePadding>
-                <ListItemButton
-                  onClick={() => navigate(item.path)}
-                  selected={index === activeIndex}
-                  sx={{
-                    "&.Mui-selected": {
-                      fontWeight: "bold",
-                      color: "text.primary",
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ color: "text.primary" }}>
-                    {item.icon}
-                  </ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            <ListItem disablePadding>
+              <ListItemButton
+                component={NavLink}
+                to="/exhibitor/dashboard"
+                sx={{ position: "relative", zIndex: 1 }}
+              >
+                <ListItemIcon sx={{ color: "text.primary" }}>
+                  <Dashboard />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton
+                component={NavLink}
+                to="/exhibitor/exhibitions"
+                sx={{ position: "relative", zIndex: 1 }}
+              >
+                <ListItemIcon sx={{ color: "text.primary" }}>
+                  <Event />
+                </ListItemIcon>
+                <ListItemText primary="My Exhibitions" />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton
+                component={NavLink}
+                to="/exhibitor/previous-exhibitions"
+                sx={{ position: "relative", zIndex: 1 }}
+              >
+                <ListItemIcon sx={{ color: "text.primary" }}>
+                  <History />
+                </ListItemIcon>
+                <ListItemText primary="Previous Exhibitions" />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton
+                component={NavLink}
+                to="/exhibitor/create-event"
+                sx={{ position: "relative", zIndex: 1 }}
+              >
+                <ListItemIcon sx={{ color: "text.primary" }}>
+                  <AddCircle />
+                </ListItemIcon>
+                <ListItemText primary="Create Event" />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton
+                component={NavLink}
+                to="/exhibitor/messages"
+                sx={{ position: "relative", zIndex: 1 }}
+              >
+                <ListItemIcon sx={{ color: "text.primary" }}>
+                  <Message />
+                </ListItemIcon>
+                <ListItemText primary="Messages" />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
       </Drawer>
 
+      {/* Main Content */}
       <Box sx={{ flexGrow: 1 }}>
-
         <AppBar
           position="static"
           elevation={0}
@@ -137,12 +198,19 @@ function Navbar({ children }) {
             bgcolor: "primary.main",
             borderBottom: "1px solid #eee",
             color: "text.primary",
-            width:"100%",
+            width: "100%",
           }}
         >
-          <Toolbar sx={{ position:"relative"}}>
-           
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 ,position:"absolute",right:0}}>
+          <Toolbar sx={{ position: "relative" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                position: "absolute",
+                right: 0,
+              }}
+            >
               <Typography variant="body1" fontWeight="500">
                 John Doe
               </Typography>
