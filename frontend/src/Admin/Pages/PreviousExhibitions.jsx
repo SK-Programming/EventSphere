@@ -131,7 +131,7 @@ function PreviousExhibitions() {
                   <Button
                     variant="contained"
                     fullWidth
-                    onClick={() => navigate(`/exhibitor/previous-exhibitions/${event.id}`)}
+                    onClick={() => navigate(`/admin/previous-exhibitions/${event.id}`)}
                   >
                     View Details
                   </Button>

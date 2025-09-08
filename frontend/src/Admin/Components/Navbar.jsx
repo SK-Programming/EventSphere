@@ -19,7 +19,8 @@ import {
   Dashboard,
   Event,
   History,
-  AddCircle,
+  People,
+  Group,
   Message,
   Logout,
 } from "@mui/icons-material";
@@ -39,37 +40,22 @@ function Navbar({ children }) {
     navigate("/login");
   };
 
-  // 🔥 Manual highlight with if/else
   let highlightTop = -1;
+// /previous-exhibitions/:id
+  if (location.pathname === "/admin/dashboard") highlightTop = 0;
+  else if (location.pathname === "/admin/event-request") highlightTop = 48;
+  else if (location.pathname === "/admin/active-events") highlightTop = 96;
+  else if (location.pathname.startsWith("/admin/active-events")) highlightTop = 96;
 
-  if (location.pathname === "/exhibitor/dashboard") {
-    highlightTop = 0;
-  } else if (location.pathname === "/exhibitor/exhibitions") {
-    highlightTop = 48;
-  } 
-  else if (location.pathname.startsWith("/exhibitor/events/")) {
-    // dynamic route: matches /exhibitor/events/:id
-    highlightTop = 48;
-  }
-   else if (location.pathname === "/exhibitor/previous-exhibitions") {
-    highlightTop = 96;
-  }
-    else if (location.pathname.startsWith("/exhibitor/previous-exhibitions/")) {
-    // dynamic route: matches /exhibitor/events/:id
-    highlightTop = 96;
-  }
+  else if (location.pathname === "/admin/previous-exhibitions") highlightTop = 144;
+  else if (location.pathname.startsWith("/admin/previous-exhibitions")) highlightTop = 144;
 
-   else if (location.pathname === "/exhibitor/create-event") {
-    highlightTop = 144;
-  } else if (location.pathname === "/exhibitor/messages") {
-    highlightTop = 192;
-  } else if (location.pathname === "/exhibitor/profile") {
-    highlightTop = 240;
-  }
+  else if (location.pathname === "/admin/exhibitors") highlightTop = 192;
+  else if (location.pathname === "/admin/users") highlightTop = 240;
+  else if (location.pathname === "/admin/messages") highlightTop = 288;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
       <Drawer
         variant="permanent"
         sx={{
@@ -84,6 +70,7 @@ function Navbar({ children }) {
           },
         }}
       >
+        {/* Logo */}
         <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
           <Box sx={{ mx: 1 }}>
             <img src="Logo.png" alt="Logo" height={40} />
@@ -92,17 +79,17 @@ function Navbar({ children }) {
             variant="h6"
             sx={{ fontWeight: "bold", color: "text.primary" }}
           >
-            Event
+            Admin
           </Typography>
           <Typography
             variant="h6"
             sx={{ fontWeight: "bold", color: "text.logoLite" }}
           >
-            Sphere
+            Panel
           </Typography>
         </Box>
 
-        {/* Highlight bar */}
+        {/* Highlight */}
         <Box sx={{ position: "relative", flex: 1, mt: 2 }}>
           {highlightTop !== -1 && (
             <Box
@@ -115,73 +102,58 @@ function Navbar({ children }) {
                 bgcolor: "secondary.main",
                 transition: "top 0.3s ease",
                 zIndex: 0,
-                mt:1
+                mt: 1,
               }}
             />
           )}
 
+          {/* Sidebar Links */}
           <List>
             <ListItem disablePadding>
-              <ListItemButton
-                component={NavLink}
-                to="/exhibitor/dashboard"
-                sx={{ position: "relative", zIndex: 1 }}
-              >
-                <ListItemIcon sx={{ color: "text.primary" }}>
-                  <Dashboard />
-                </ListItemIcon>
+              <ListItemButton component={NavLink} to="/admin/dashboard" sx={{ position: "relative", zIndex: 1 }}>
+                <ListItemIcon sx={{ color: "text.primary" }}><Dashboard /></ListItemIcon>
                 <ListItemText primary="Dashboard" />
               </ListItemButton>
             </ListItem>
 
             <ListItem disablePadding>
-              <ListItemButton
-                component={NavLink}
-                to="/exhibitor/exhibitions"
-                sx={{ position: "relative", zIndex: 1 }}
-              >
-                <ListItemIcon sx={{ color: "text.primary" }}>
-                  <Event />
-                </ListItemIcon>
-                <ListItemText primary="My Exhibitions" />
+              <ListItemButton component={NavLink} to="/admin/event-request" sx={{ position: "relative", zIndex: 1 }}>
+                <ListItemIcon sx={{ color: "text.primary" }}><Event /></ListItemIcon>
+                <ListItemText primary="Event Request" />
               </ListItemButton>
             </ListItem>
 
             <ListItem disablePadding>
-              <ListItemButton
-                component={NavLink}
-                to="/exhibitor/previous-exhibitions"
-                sx={{ position: "relative", zIndex: 1 }}
-              >
-                <ListItemIcon sx={{ color: "text.primary" }}>
-                  <History />
-                </ListItemIcon>
+              <ListItemButton component={NavLink} to="/admin/active-events" sx={{ position: "relative", zIndex: 1 }}>
+                <ListItemIcon sx={{ color: "text.primary" }}><Event /></ListItemIcon>
+                <ListItemText primary="Active Events" />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton component={NavLink} to="/admin/previous-exhibitions" sx={{ position: "relative", zIndex: 1 }}>
+                <ListItemIcon sx={{ color: "text.primary" }}><History /></ListItemIcon>
                 <ListItemText primary="Previous Exhibitions" />
               </ListItemButton>
             </ListItem>
 
             <ListItem disablePadding>
-              <ListItemButton
-                component={NavLink}
-                to="/exhibitor/create-event"
-                sx={{ position: "relative", zIndex: 1 }}
-              >
-                <ListItemIcon sx={{ color: "text.primary" }}>
-                  <AddCircle />
-                </ListItemIcon>
-                <ListItemText primary="Create Event" />
+              <ListItemButton component={NavLink} to="/admin/exhibitors" sx={{ position: "relative", zIndex: 1 }}>
+                <ListItemIcon sx={{ color: "text.primary" }}><People /></ListItemIcon>
+                <ListItemText primary="Exhibitors" />
               </ListItemButton>
             </ListItem>
 
             <ListItem disablePadding>
-              <ListItemButton
-                component={NavLink}
-                to="/exhibitor/messages"
-                sx={{ position: "relative", zIndex: 1 }}
-              >
-                <ListItemIcon sx={{ color: "text.primary" }}>
-                  <Message />
-                </ListItemIcon>
+              <ListItemButton component={NavLink} to="/admin/users" sx={{ position: "relative", zIndex: 1 }}>
+                <ListItemIcon sx={{ color: "text.primary" }}><Group /></ListItemIcon>
+                <ListItemText primary="Users" />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton component={NavLink} to="/admin/messages" sx={{ position: "relative", zIndex: 1 }}>
+                <ListItemIcon sx={{ color: "text.primary" }}><Message /></ListItemIcon>
                 <ListItemText primary="Messages" />
               </ListItemButton>
             </ListItem>
@@ -202,29 +174,13 @@ function Navbar({ children }) {
           }}
         >
           <Toolbar sx={{ position: "relative" }}>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                position: "absolute",
-                right: 0,
-              }}
-            >
-              <Typography variant="body1" fontWeight="500">
-                John Doe
-              </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, position: "absolute", right: 0 }}>
+              <Typography variant="body1" fontWeight="500">Admin User</Typography>
               <IconButton onClick={handleMenuOpen}>
                 <Avatar src="https://randomuser.me/api/portraits/men/11.jpg" />
               </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-              >
-                <MenuItem onClick={() => navigate("/exhibitor/profile")}>
-                  Profile
-                </MenuItem>
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                <MenuItem onClick={() => navigate("/admin/profile")}>Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>
                   <Logout fontSize="small" sx={{ mr: 1 }} /> Logout
                 </MenuItem>

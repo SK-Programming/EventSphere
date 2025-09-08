@@ -14,7 +14,7 @@ import ExhibitorRegister from "./Pages/ExhibitorRegister";
 import ExhibitorDetail from "./Pages/ExhibitorDetail";
 function Main() {
   return (
-    <Router>
+
       <Container maxWidth="xl" sx={{ p: 0 }}>
         <Navbar />
         <Routes>
@@ -30,7 +30,7 @@ function Main() {
           <Route path="/exhibitors/:id" element={<ExhibitorDetail />} />
         </Routes>
       </Container>
-    </Router>
+ 
   );
 }
 

@@ -5,7 +5,8 @@ import './App.css'
 import Main from './Atendee/Main'
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import ExhibitorMain from './Exhibitor/ExhibitorMain'
-
+import AdminMain from './Admin/AdminMain'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -54,9 +55,17 @@ function App() {
   return (
     <>
      <ThemeProvider theme={theme}>
+<Router>
+  <Routes>
+         
+ <Route path="/*" element={ <Main/>} />
+ <Route path="/exhibitor/*" element={ <ExhibitorMain/>} />
+ <Route path="/admin/*" element={<AdminMain/>} />
+     
 
-          {/* <Main/> */}
-     <ExhibitorMain/>
+
+</Routes>
+</Router>
      </ThemeProvider>
 
 
