@@ -56,7 +56,8 @@ function App() {
      <ThemeProvider theme={theme}>
 
           {/* <Main/> */}
-     <ExhibitorMain/>
+     {/* <ExhibitorMain/> */}
+    
      </ThemeProvider>
 
 
